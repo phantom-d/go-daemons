@@ -33,20 +33,20 @@ type DaemonStatus struct {
 	} `json:"count"`
 }
 
-type Factory map[string]func() DaemonInterface
+type FactoryData map[string]func() DaemonInterface
 
-var factory = make(Factory)
+var Factory = make(FactoryData)
 
 func init() {
-	factory.Register("watcher", func() DaemonInterface { return &Watcher{} })
-	factory.Register("import", func() DaemonInterface { return &Import{} })
+	Factory.Register("watcher", func() DaemonInterface { return &Watcher{} })
+	Factory.Register("import", func() DaemonInterface { return &Import{} })
 }
 
-func (factory *Factory) Register(name string, factoryFunc func() DaemonInterface) {
+func (factory *FactoryData) Register(name string, factoryFunc func() DaemonInterface) {
 	(*factory)[name] = factoryFunc
 }
 
-func (factory *Factory) CreateInstance(name string) (result DaemonInterface) {
+func (factory *FactoryData) CreateInstance(name string) (result DaemonInterface) {
 	if factoryFunc, ok := (*factory)[name]; ok {
 		result = factoryFunc()
 	}

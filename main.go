@@ -21,7 +21,7 @@ func New(name string) DaemonInterface {
 	if cfg, ok := config.Cfg().Daemons[name]; ok {
 		if cfg.Enabled {
 			cfg.Name = name
-			d := factory.CreateInstance(name)
+			d := Factory.CreateInstance(name)
 			dd := &DaemonData{}
 			err := mapstructure.Decode(cfg, &dd)
 			if err != nil {
