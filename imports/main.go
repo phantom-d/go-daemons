@@ -126,9 +126,9 @@ func Run(w WorkerInterface) (err error) {
 				if memStats.Alloc > wd.MemoryLimit {
 					break
 				}
-				_, err := wd.BeforeIteration(&data)
+				err := w.BeforeProcessing(&data)
 				if err != nil {
-					config.Log().Error().Err(err).Msgf("Worker '%s' processing BeforeIteration", wd.Name)
+					config.Log().Error().Err(err).Msgf("Worker '%s' processing BeforeProcessing", wd.Name)
 				}
 				if data != nil {
 					err = w.Processing(data, &result)
@@ -136,9 +136,9 @@ func Run(w WorkerInterface) (err error) {
 						config.Log().Error().Err(err).Msgf("Worker '%s' processing", wd.Name)
 					}
 				}
-				_, err = wd.AfterIteration(result.ErrorItems)
+				err = w.AfterProcessing(result.ErrorItems)
 				if err != nil {
-					config.Log().Error().Err(err).Msgf("Worker '%s' processing AfterIteration", wd.Name)
+					config.Log().Error().Err(err).Msgf("Worker '%s' processing AfterProcessing", wd.Name)
 				}
 				timeStart = time.Now()
 				runtime.GC()
@@ -188,10 +188,10 @@ func (w *Worker) AfterRun(result *ResultProcess) (err error) {
 	return
 }
 
-func (w *Worker) BeforeIteration(data interface{}) (result interface{}, err error) {
+func (w *Worker) BeforeProcessing(data interface{}) (result interface{}, err error) {
 	return
 }
 
-func (w *Worker) AfterIteration(errorItems interface{}) (result interface{}, err error) {
+func (w *Worker) AfterProcessing(errorItems interface{}) (result interface{}, err error) {
 	return
 }

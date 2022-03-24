@@ -23,17 +23,17 @@ type Worker struct {
 }
 
 type WorkerInterface interface {
+	AfterProcessing(interface{}) error
+	AfterRun(*ResultProcess) (interface{}, error)
+	BeforeProcessing(interface{}) error
 	BeforeRun() (interface{}, error)
-	AfterRun() (interface{}, error)
-	BeforeIteration(interface{}) (interface{}, error)
-	AfterIteration(*ResultProcess) error
 	Data() *Worker
+	ExtractId(interface{}) ([]string, error)
 	GetEntities() (interface{}, error)
 	GetStatus() (bool, error)
+	Processing(interface{}, *ResultProcess) error
 	Run() error
 	SetData(worker *Worker)
-	Processing(interface{}, *ResultProcess) error
-	ExtractId(interface{}) ([]string, error)
 	Terminate(os.Signal)
 }
 
