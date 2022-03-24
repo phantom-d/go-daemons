@@ -24,7 +24,7 @@ type Worker struct {
 
 type WorkerInterface interface {
 	AfterProcessing(interface{}) error
-	AfterRun(*ResultProcess) (interface{}, error)
+	AfterRun(*ResultProcess) error
 	BeforeProcessing(interface{}) error
 	BeforeRun() (interface{}, error)
 	Data() *Worker

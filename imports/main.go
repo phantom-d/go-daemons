@@ -87,7 +87,7 @@ func Run(w WorkerInterface) (err error) {
 				case syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
 					config.Log().Info().Msgf("worker '%s' terminate", wd.Name)
 					cancel()
-					wd.Terminate(s)
+					w.Terminate(s)
 					err := wd.Context.Release()
 					if err != nil {
 						config.Log().Error().Err(err).Msgf("Worker '%s' terminate", wd.Name)
@@ -111,7 +111,7 @@ func Run(w WorkerInterface) (err error) {
 			runtime.GC()
 			memStats := &runtime.MemStats{}
 			runtime.ReadMemStats(memStats)
-			_, err = wd.BeforeRun()
+			_, err = w.BeforeRun()
 			if err != nil {
 				config.Log().Error().Err(err).Msgf("Worker '%s' processing BeforeRun", wd.Name)
 			}
@@ -154,7 +154,7 @@ func Run(w WorkerInterface) (err error) {
 			}
 			runtime.GC()
 			runtime.ReadMemStats(memStats)
-			err = wd.AfterRun(&result)
+			err = w.AfterRun(&result)
 			if err != nil {
 				config.Log().Error().Err(err).Msgf("Worker '%s' processing AfterRun", wd.Name)
 			}
