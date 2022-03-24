@@ -28,7 +28,7 @@ type WorkerInterface interface {
 	BeforeIteration(interface{}) (interface{}, error)
 	AfterIteration(*ResultProcess) error
 	Data() *Worker
-	GetData() (interface{}, error)
+	GetEntities() (interface{}, error)
 	GetStatus() (bool, error)
 	Run() error
 	SetData(worker *Worker)

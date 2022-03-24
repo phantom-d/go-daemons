@@ -119,7 +119,7 @@ func Run(w WorkerInterface) (err error) {
 				break
 			}
 			timeStart := time.Now()
-			data, errorData := w.GetData()
+			data, errorData := w.GetEntities()
 			runtime.ReadMemStats(memStats)
 			for errorData == nil && data != nil {
 				result := ResultProcess{Queue: wd.Queue}
@@ -143,7 +143,7 @@ func Run(w WorkerInterface) (err error) {
 				timeStart = time.Now()
 				runtime.GC()
 				runtime.ReadMemStats(memStats)
-				data, errorData = w.GetData()
+				data, errorData = w.GetEntities()
 			}
 
 			if errorData != nil || data == nil {
