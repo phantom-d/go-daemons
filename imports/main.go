@@ -188,10 +188,10 @@ func (w *Worker) AfterRun(result *ResultProcess) (err error) {
 	return
 }
 
-func (w *Worker) BeforeProcessing(data interface{}) (result interface{}, err error) {
+func (w *Worker) BeforeProcessing(data interface{}) (err error) {
 	return
 }
 
-func (w *Worker) AfterProcessing(errorItems interface{}) (result interface{}, err error) {
+func (w *Worker) AfterProcessing(errorItems interface{}) (err error) {
 	return
 }
