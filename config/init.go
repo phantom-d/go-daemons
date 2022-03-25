@@ -12,7 +12,6 @@ type Config struct {
 	LogFile string
 	Daemon  string
 	Worker  string
-	Status  bool
 	Debug   bool
 	Daemons map[string]Daemon
 	Signal  string
@@ -40,11 +39,10 @@ var (
 	logger      *zerolog.Logger
 )
 
-func init() {
+func Init() {
 	flag.CommandLine.AddGoFlagSet(goflag.CommandLine)
 	flag.StringVarP(&application.PidDir, "pid-dir", "p", "pids", "Path to a save pid files")
 	flag.StringVarP(&application.Daemon, "daemon", "d", "watcher", "Daemon name to starting")
 	flag.StringVarP(&application.Worker, "worker", "w", "", "Warker name to starting")
 	flag.BoolVar(&application.Debug, "debug", false, "Enable debug mode")
-	flag.Parse()
 }
