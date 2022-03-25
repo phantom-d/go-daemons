@@ -18,48 +18,50 @@ import (
 
 func New(cfg config.Worker, parent string, params map[string]interface{}) WorkerInterface {
 	var w WorkerInterface
-	if cfg.Enabled {
-		w = Factory.CreateInstance(cfg.Name)
-		wd := &Worker{Params: params, Parent: parent}
-		err := mapstructure.Decode(cfg, &wd)
-		if err != nil {
-			config.Log().Info().Msg("Worker load config")
-			return nil
-		}
-		pidFileName, err := filepath.Abs(fmt.Sprintf("%s/%s_%s.pid", config.Cfg().PidDir, parent, cfg.Name))
-		if err != nil {
-			config.Log().Fatal().Err(err).Msgf("Init daemon '%s'", cfg.Name)
-		}
-		var args []string
-		notExists := true
-		daemonArg := "--daemon=" + parent
+	if w = Factory.CreateInstance(cfg.Name); w != nil {
+		if cfg.Enabled {
+			wd := &Worker{Params: params, Parent: parent}
+			err := mapstructure.Decode(cfg, &wd)
+			if err != nil {
+				config.Log().Info().Msg("Worker load config")
+				return nil
+			}
+			pidFileName, err := filepath.Abs(fmt.Sprintf("%s/%s_%s.pid", config.Cfg().PidDir, parent, cfg.Name))
+			if err != nil {
+				config.Log().Fatal().Err(err).Msgf("Init daemon '%s'", cfg.Name)
+			}
+			var args []string
+			notExists := true
+			daemonArg := "--daemon=" + parent
 
-		for _, arg := range os.Args {
-			if matched, _ := regexp.MatchString(`--migrate`, arg); matched {
-				continue
+			for _, arg := range os.Args {
+				if matched, _ := regexp.MatchString(`--migrate`, arg); matched {
+					continue
+				}
+				if matched, _ := regexp.MatchString(`--daemon=`, arg); matched {
+					arg = daemonArg
+					notExists = false
+				}
+				args = append(args, arg)
 			}
-			if matched, _ := regexp.MatchString(`--daemon=`, arg); matched {
-				arg = daemonArg
-				notExists = false
+			if notExists {
+				args = append(args, daemonArg)
 			}
-			args = append(args, arg)
+			args = append(args, "--worker="+cfg.Name)
+			wd.Context = &config.Context{
+				Name:        cfg.Name,
+				Type:        `worker`,
+				PidFileName: pidFileName,
+				PidFilePerm: 0644,
+				WorkDir:     "./",
+				Args:        args,
+			}
+			w.SetData(wd)
+		} else {
+			config.Log().Info().Msgf("Worker '%s' is disabled!", cfg.Name)
 		}
-		if notExists {
-			args = append(args, daemonArg)
-		}
-		args = append(args, "--worker="+cfg.Name)
-		wd.Context = &config.Context{
-			Name:        cfg.Name,
-			Type:        `worker`,
-			PidFileName: pidFileName,
-			PidFilePerm: 0644,
-			WorkDir:     "./",
-			Args:        args,
-		}
-		w.SetData(wd)
-	}
-	if w == nil {
-		config.Log().Info().Msgf("Worker '%s' is disabled!", cfg.Name)
+	} else {
+		config.Log().Info().Msgf("Worker '%s' is not found!", cfg.Name)
 	}
 	return w
 }
