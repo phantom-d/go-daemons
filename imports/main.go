@@ -17,8 +17,9 @@ import (
 )
 
 func New(cfg config.Worker, parent string, params map[string]interface{}) WorkerInterface {
+	var w WorkerInterface
 	if cfg.Enabled {
-		w := Factory.CreateInstance(cfg.Name)
+		w = Factory.CreateInstance(cfg.Name)
 		wd := &Worker{Params: params, Parent: parent}
 		err := mapstructure.Decode(cfg, &wd)
 		if err != nil {
@@ -56,11 +57,11 @@ func New(cfg config.Worker, parent string, params map[string]interface{}) Worker
 			Args:        args,
 		}
 		w.SetData(wd)
-		return w
-	} else {
+	}
+	if w == nil {
 		config.Log().Info().Msgf("Worker '%s' is disabled!", cfg.Name)
 	}
-	return nil
+	return w
 }
 
 func Run(w WorkerInterface) (err error) {
