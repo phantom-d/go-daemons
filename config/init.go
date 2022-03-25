@@ -44,5 +44,4 @@ func Init() {
 	flag.StringVarP(&application.PidDir, "pid-dir", "p", "pids", "Path to a save pid files")
 	flag.StringVarP(&application.Daemon, "daemon", "d", "watcher", "Daemon name to starting")
 	flag.StringVarP(&application.Worker, "worker", "w", "", "Warker name to starting")
-	flag.BoolVar(&application.Debug, "debug", false, "Enable debug mode")
 }
